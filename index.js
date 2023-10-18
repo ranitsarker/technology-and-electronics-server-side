@@ -82,6 +82,26 @@ app.use(express.json());
         res.send(result);
       });
 
+      // product update put endpoint 
+      app.put('/product/:id', async (req, res) => {
+        const id = req.params.id;
+        const filter = {_id: new ObjectId(id)};
+        const options = { upset: true };
+        const updatedProduct = req.body;
+        const product = {
+          $set: {
+            image:updatedProduct.image,
+            name:updatedProduct.name,
+            brand:updatedProduct.brand,
+            type:updatedProduct.type,
+            price:updatedProduct.price,
+            rating:updatedProduct.rating,
+          }
+        }
+        const result = await productCollection.updateOne(filter, product, options);
+        res.send(result);
+      })
+
 
 
 
