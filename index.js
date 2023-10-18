@@ -31,6 +31,12 @@ app.use(express.json());
         const result = await productCollection.insertOne(newProduct);
         res.send(result);
       })
+      // product get endpoint 
+      app.get('/product', async(req, res) => {
+        const cursor = productCollection.find();
+        const result = await cursor.toArray();
+        res.send(result);
+      })
 
 
 
