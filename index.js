@@ -45,31 +45,32 @@ app.use(express.json());
       });
       // product get endpoint for Samsung products
       app.get('/product/samsung', async (req, res) => {
-        const cursor = productCollection.find({ brand: 'samsung' });
+        const cursor = productCollection.find({ brand: 'Samsung' });
         const samsungProducts = await cursor.toArray();
         res.send(samsungProducts);
       });
       // product get endpoint for Sony products
       app.get('/product/sony', async (req, res) => {
-        const cursor = productCollection.find({ brand: 'sony' });
+        const cursor = productCollection.find({ brand: 'Sony' });
         const sonyProducts = await cursor.toArray();
         res.send(sonyProducts);
       });
       // product get endpoint for Google products
       app.get('/product/google', async (req, res) => {
-        const cursor = productCollection.find({ brand: 'google' });
-        const googleProducts = await cursor.toArray();
-        res.send(googleProducts);
+          const cursor = productCollection.find({ brand: 'Google' }); 
+          const googleProducts = await cursor.toArray();
+          res.send(googleProducts);
       });
+
       // product get endpoint for Intel products
       app.get('/product/intel', async (req, res) => {
-        const cursor = productCollection.find({ brand: 'intel' });
+        const cursor = productCollection.find({ brand: 'Intel' });
         const intelProducts = await cursor.toArray();
         res.send(intelProducts);
       });
       // product get endpoint for Microsoft products
       app.get('/product/microsoft', async (req, res) => {
-        const cursor = productCollection.find({ brand: 'microsoft' });
+        const cursor = productCollection.find({ brand: 'Microsoft' });
         const microsoftProducts = await cursor.toArray();
         res.send(microsoftProducts);
       });
