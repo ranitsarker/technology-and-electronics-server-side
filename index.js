@@ -37,6 +37,13 @@ app.use(express.json());
         const result = await cursor.toArray();
         res.send(result);
       })
+      // product get endpoint for Apple products
+      app.get('/product/apple', async (req, res) => {
+        const cursor = productCollection.find({ brand: 'Apple' });
+        const appleProducts = await cursor.toArray();
+        res.send(appleProducts);
+      });
+      
 
 
 
