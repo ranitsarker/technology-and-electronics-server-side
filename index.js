@@ -22,10 +22,14 @@ app.use(express.json());
   async function run() {
     try {
       await client.connect();
+      const productCollection = client.db('productDB').collection('product')
+
       // product post endpoint 
       app.post('/product', async(req, res) => {
         const newProduct = req.body;
         console.log(newProduct);
+        const result = await productCollection.insertOne(newProduct);
+        res.send(result);
       })
 
 
