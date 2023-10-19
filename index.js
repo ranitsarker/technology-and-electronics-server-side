@@ -22,13 +22,21 @@ app.use(express.json());
   async function run() {
     try {
       await client.connect();
-      const productCollection = client.db('productDB').collection('product')
+      const productCollection = client.db('productDB').collection('product');
+      const userCollection = client.db('productDB').collection('user');
 
       // product post endpoint 
       app.post('/product', async(req, res) => {
         const newProduct = req.body;
         console.log(newProduct);
         const result = await productCollection.insertOne(newProduct);
+        res.send(result);
+      })
+      // user post endpoint 
+      app.post('/user', async(req, res) => {
+        const newUser = req.body;
+        console.log(newUser);
+        const result = await userCollection.insertOne(newUser);
         res.send(result);
       })
       // product get endpoint 
@@ -85,7 +93,7 @@ app.use(express.json());
       // product update put endpoint 
       app.put('/product/:id', async (req, res) => {
         const id = req.params.id;
-        const filter = {_id: new ObjectId(id)};
+        const filter = { _id: new ObjectId(id)};
         const options = { upset: true };
         const updatedProduct = req.body;
         const product = {
