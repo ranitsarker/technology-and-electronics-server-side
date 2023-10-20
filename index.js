@@ -111,12 +111,13 @@ app.use(express.json());
         const result = await productCollection.updateOne(filter, product, options);
         res.send(result);
       })
-// cart
+
+// post endpoint for add to cart
 app.post('/add-to-cart', async (req, res) => {
   try {
     const { email, product } = req.body;
     console.log('User email:', email);
-    console.log('Product to add:', product); // Log the user email and product data
+    console.log('Product to add:', product); 
 
     // Insert the product into the user's cart collection
     const result = await cartCollection.insertOne({ email, product });
@@ -146,6 +147,31 @@ app.get('/cart/:email', async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch user cart data' });
   }
 });
+
+// Delete a product from the user's cart
+app.delete('/remove-from-cart', async (req, res) => {
+  try {
+    const { email, product } = req.body;
+    console.log('User email:', email);
+    console.log('Product to remove:', product);
+
+    // Delete the product from the user's cart collection
+    const result = await cartCollection.deleteOne({ email, 'product._id': product._id });
+    console.log('Delete result:', result);
+
+    if (result.deletedCount > 0) {
+      console.log('Product removed from cart successfully');
+      res.status(200).send({ message: 'Product removed from cart successfully' });
+    } else {
+      console.error('Failed to remove product from cart. Product not found in the cart.');
+      res.status(404).send({ message: 'Product not found in the cart' });
+    }
+  } catch (error) {
+    console.error('Error removing product from cart:', error);
+    res.status(500).send({ message: 'Failed to remove product from cart' });
+  }
+});
+
 
       await client.db("admin").command({ ping: 1 });
       console.log("Pinged your deployment. You successfully connected to MongoDB!");
