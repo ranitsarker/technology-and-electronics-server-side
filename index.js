@@ -24,6 +24,8 @@ app.use(express.json());
       await client.connect();
       const productCollection = client.db('productDB').collection('product');
       const userCollection = client.db('productDB').collection('user');
+      const cartCollection = client.db('productDB').collection('cart');
+
 
       // product post endpoint 
       app.post('/product', async(req, res) => {
@@ -82,7 +84,7 @@ app.use(express.json());
         const microsoftProducts = await cursor.toArray();
         res.send(microsoftProducts);
       });
-      // product update endpoint 
+      // product update get endpoint 
       app.get('/product/:id', async (req, res) => {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) };
@@ -93,7 +95,7 @@ app.use(express.json());
       // product update put endpoint 
       app.put('/product/:id', async (req, res) => {
         const id = req.params.id;
-        const filter = { _id: new ObjectId(id)};
+        const filter = {_id: new ObjectId(id)};
         const options = { upset: true };
         const updatedProduct = req.body;
         const product = {
@@ -109,10 +111,41 @@ app.use(express.json());
         const result = await productCollection.updateOne(filter, product, options);
         res.send(result);
       })
+// cart
+app.post('/add-to-cart', async (req, res) => {
+  try {
+    const { email, product } = req.body;
+    console.log('User email:', email);
+    console.log('Product to add:', product); // Log the user email and product data
 
+    // Insert the product into the user's cart collection
+    const result = await cartCollection.insertOne({ email, product });
+    console.log('Insert result:', result); // Log the database insert result
 
+    if (result.insertedId) {
+      console.log('Product added to cart successfully');
+      res.status(201).send({ message: 'Product added to cart successfully' });
+    } else {
+      console.error('Failed to add product to cart. Database error:', result);
+      res.status(500).send({ message: 'Failed to add product to cart' });
+    }
+  } catch (error) {
+    console.error('Error adding product to cart:', error);
+    res.status(500).send({ message: 'Failed to add product to cart' });
+  }
+});
 
-
+// Get user's cart by email
+app.get('/cart/:email', async (req, res) => {
+  try {
+    const userEmail = req.params.email; // Get the user's email from the URL
+    const userCartData = await cartCollection.find({ email: userEmail }).toArray();
+    res.json(userCartData);
+  } catch (error) {
+    console.error('Error fetching user cart data:', error);
+    res.status(500).json({ message: 'Failed to fetch user cart data' });
+  }
+});
 
       await client.db("admin").command({ ping: 1 });
       console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -130,4 +163,3 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
   })
-  
