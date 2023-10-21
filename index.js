@@ -27,36 +27,32 @@ app.use(express.json());
       const cartCollection = client.db('productDB').collection('cart');
 
 
-     // Add a product to the cart
-app.post('/add-to-cart', (req, res) => {
-  const { email, product } = req.body;
-  cartCollection.insertOne({ email, product })
-    .then((result) => {
-      if (result.insertedId) {
-        res.send({ message: 'Product added to cart successfully' });
-      } else {
-        res.status(500).send({ message: 'Failed to add product to cart' });
-      }
-    })
-    .catch((error) => {
-      console.error('Error adding product to cart:', error);
-      res.status(500).send({ message: 'Failed to add product to cart' });
-    });
-});
-
-// Get a user's cart by email
-app.get('/cart/:email', (req, res) => {
-  const userEmail = req.params.email; // Get the user's email from the URL
-  cartCollection.find({ email: userEmail }).toArray()
-    .then((userCartData) => {
-      res.send(userCartData);
-    })
-    .catch((error) => {
-      console.error('Error fetching user cart data:', error);
-      res.status(500).send({ message: 'Failed to fetch user cart data' });
-    });
-});
-
+      // product post endpoint 
+      app.post('/product', async(req, res) => {
+        const newProduct = req.body;
+        console.log(newProduct);
+        const result = await productCollection.insertOne(newProduct);
+        res.send(result);
+      })
+      // user post endpoint 
+      app.post('/user', async(req, res) => {
+        const newUser = req.body;
+        console.log(newUser);
+        const result = await userCollection.insertOne(newUser);
+        res.send(result);
+      })
+      // product get endpoint 
+      app.get('/product', async(req, res) => {
+        const cursor = productCollection.find();
+        const result = await cursor.toArray();
+        res.send(result);
+      })
+      // product get endpoint for Apple products
+      app.get('/product/apple', async (req, res) => {
+        const cursor = productCollection.find({ brand: 'Apple' });
+        const appleProducts = await cursor.toArray();
+        res.send(appleProducts);
+      });
       // product get endpoint for Samsung products
       app.get('/product/samsung', async (req, res) => {
         const cursor = productCollection.find({ brand: 'Samsung' });
@@ -159,6 +155,7 @@ app.delete('/cart/:id' , async(req, res) => {
   const result = await cartCollection.deleteOne(query);
   res.send(result);
 })
+
 
       await client.db("admin").command({ ping: 1 });
       console.log("Pinged your deployment. You successfully connected to MongoDB!");
